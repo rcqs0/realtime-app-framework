@@ -10,6 +10,10 @@
  * For more information on views and layouts, check out:
  * http://sailsjs.org/#/documentation/concepts/Views
  */
+require('node-jsx').install({extension: '.jsx'});
+React = require('react');
+ReactTools = require('react-tools');
+path = require('path');
 
 module.exports.views = {
 
