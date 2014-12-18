@@ -30,6 +30,11 @@ var App = React.createClass({
     selectAnswer: function(card) {
         this.setState({selected: card});
     },
+    testSocket: function() {
+        io.socket.get('/socket/test', function(data, res) {
+            console.log(data);
+        });
+    },
     render: function() {
         var cards = this.state.hand.map(function(card) {
             if (this.state.selected == card) {
@@ -53,6 +58,9 @@ var App = React.createClass({
                     <ul className='cardList'>
                         {cards}
                     </ul>
+                </div>
+                <div>
+                    <button onClick={this.testSocket}>Host</button>
                 </div>
             </div>
         );

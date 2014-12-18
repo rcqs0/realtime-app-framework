@@ -6,19 +6,15 @@
  */
 
 module.exports = {
-	
-
 
   /**
    * `SocketController.test()`
    */
   test: function (req, res) {
 
-    console.log(req.user);
+    game.createGame(req.user);
 
-    return res.json({
-      todo: 'test() is not implemented yet!'
-    });
+    return res.json({count: game.getHost()});
   }
 };
 
