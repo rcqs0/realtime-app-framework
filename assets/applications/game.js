@@ -61,32 +61,57 @@
 	var cards = __webpack_require__(5);
 
 	var answerCards = _.where(cards, {cardType: 'A'});
+	var questionCards = _.where(cards, {cardType: 'Q'});
 
 	var generateHand = function(cards, n) {
 	    return _.sample(cards, n);
 	};
 
+	var generateQuestion = function(cards) {
+	    return _.sample(cards, 1)[0];
+	};
+
 	var App = React.createClass({displayName: 'App',
 	    getInitialState: function() {
-	        return {hand: []};
+	        return {hand: [], question: {text: '...'}, selected: null};
 	    },
-	    handleClick: function() {
-	        var newHand = generateHand(answerCards, 7);
+	    generateNewHand: function() {
+	        var newHand = generateHand(answerCards, 10);
 
 	        this.setState({hand: newHand});
 	    },
+	    generateNewQuestion: function() {
+	        var newQuestion = generateQuestion(questionCards);
+
+	        this.setState({question: newQuestion});
+	    },
+	    selectAnswer: function(card) {
+	        this.setState({selected: card});
+	    },
 	    render: function() {
-	        var cards = this.state.hand.map(function(card) {return React.createElement("li", {key: card.id}, card.text)});
+	        var cards = this.state.hand.map(function(card) {
+	            if (this.state.selected == card) {
+	                return React.createElement("li", {key: card.id, onClick: this.selectAnswer.bind(this, card), className: "selected"}, card.text)
+	            } else {
+	                return React.createElement("li", {key: card.id, onClick: this.selectAnswer.bind(this, card)}, card.text)
+	            }
+	        }.bind(this));
 
 	        return (
 	            React.createElement("div", null, 
-
-	                React.createElement("button", {onClick: this.handleClick}, "Get hand!"), 
-
-	                React.createElement("ul", {className: "cardList"}, 
-	                    cards
+	                React.createElement("div", {className: "question-card"}, 
+	                    this.state.question.text, 
+	                    React.createElement("span", {className: "chosen"}, this.state.selected ? '   ' + this.state.selected.text : '')
+	                ), 
+	                React.createElement("div", null, 
+	                    React.createElement("button", {onClick: this.generateNewQuestion}, "Get question!"), 
+	                    React.createElement("button", {onClick: this.generateNewHand}, "Get hand!")
+	                ), 
+	                React.createElement("div", null, 
+	                    React.createElement("ul", {className: "cardList"}, 
+	                        cards
+	                    )
 	                )
-
 	            )
 	        );
 	    }
@@ -22976,11 +23001,11 @@
 	"use strict";
 
 	var DOMProperty = __webpack_require__(43);
-	var ReactDefaultPerfAnalysis = __webpack_require__(244);
+	var ReactDefaultPerfAnalysis = __webpack_require__(247);
 	var ReactMount = __webpack_require__(20);
 	var ReactPerf = __webpack_require__(22);
 
-	var performanceNow = __webpack_require__(245);
+	var performanceNow = __webpack_require__(248);
 
 	function roundFloat(val) {
 	  return Math.floor(val * 100) / 100;
@@ -23272,7 +23297,7 @@
 	 * @typechecks
 	 */
 
-	var isTextNode = __webpack_require__(246);
+	var isTextNode = __webpack_require__(244);
 
 	/*jslint bitwise:true */
 
@@ -23507,7 +23532,7 @@
 
 	"use strict";
 
-	var adler32 = __webpack_require__(247);
+	var adler32 = __webpack_require__(245);
 
 	var ReactMarkupChecksum = {
 	  CHECKSUM_ATTR_NAME: 'data-react-checksum',
@@ -23562,7 +23587,7 @@
 
 	var PooledClass = __webpack_require__(49);
 	var CallbackQueue = __webpack_require__(205);
-	var ReactPutListenerQueue = __webpack_require__(248);
+	var ReactPutListenerQueue = __webpack_require__(246);
 	var Transaction = __webpack_require__(206);
 
 	var assign = __webpack_require__(26);
@@ -31781,7 +31806,7 @@
 	var PooledClass = __webpack_require__(49);
 	var ReactBrowserEventEmitter = __webpack_require__(66);
 	var ReactInputSelection = __webpack_require__(221);
-	var ReactPutListenerQueue = __webpack_require__(248);
+	var ReactPutListenerQueue = __webpack_require__(246);
 	var Transaction = __webpack_require__(206);
 
 	var assign = __webpack_require__(26);
@@ -32995,6 +33020,133 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
+	 * @providesModule isTextNode
+	 * @typechecks
+	 */
+
+	var isNode = __webpack_require__(275);
+
+	/**
+	 * @param {*} object The object to check.
+	 * @return {boolean} Whether or not the object is a DOM text node.
+	 */
+	function isTextNode(object) {
+	  return isNode(object) && object.nodeType == 3;
+	}
+
+	module.exports = isTextNode;
+
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule adler32
+	 */
+
+	/* jslint bitwise:true */
+
+	"use strict";
+
+	var MOD = 65521;
+
+	// This is a clean-room implementation of adler32 designed for detecting
+	// if markup is not what we expect it to be. It does not need to be
+	// cryptographically strong, only reasonably good at detecting if markup
+	// generated on the server is different than that on the client.
+	function adler32(data) {
+	  var a = 1;
+	  var b = 0;
+	  for (var i = 0; i < data.length; i++) {
+	    a = (a + data.charCodeAt(i)) % MOD;
+	    b = (b + a) % MOD;
+	  }
+	  return a | (b << 16);
+	}
+
+	module.exports = adler32;
+
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule ReactPutListenerQueue
+	 */
+
+	"use strict";
+
+	var PooledClass = __webpack_require__(49);
+	var ReactBrowserEventEmitter = __webpack_require__(66);
+
+	var assign = __webpack_require__(26);
+
+	function ReactPutListenerQueue() {
+	  this.listenersToPut = [];
+	}
+
+	assign(ReactPutListenerQueue.prototype, {
+	  enqueuePutListener: function(rootNodeID, propKey, propValue) {
+	    this.listenersToPut.push({
+	      rootNodeID: rootNodeID,
+	      propKey: propKey,
+	      propValue: propValue
+	    });
+	  },
+
+	  putListeners: function() {
+	    for (var i = 0; i < this.listenersToPut.length; i++) {
+	      var listenerToPut = this.listenersToPut[i];
+	      ReactBrowserEventEmitter.putListener(
+	        listenerToPut.rootNodeID,
+	        listenerToPut.propKey,
+	        listenerToPut.propValue
+	      );
+	    }
+	  },
+
+	  reset: function() {
+	    this.listenersToPut.length = 0;
+	  },
+
+	  destructor: function() {
+	    this.reset();
+	  }
+	});
+
+	PooledClass.addPoolingTo(ReactPutListenerQueue);
+
+	module.exports = ReactPutListenerQueue;
+
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
 	 * @providesModule ReactDefaultPerfAnalysis
 	 */
 
@@ -33194,7 +33346,7 @@
 
 
 /***/ },
-/* 245 */
+/* 248 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -33209,7 +33361,7 @@
 	 * @typechecks
 	 */
 
-	var performance = __webpack_require__(275);
+	var performance = __webpack_require__(276);
 
 	/**
 	 * Detect if we can use `window.performance.now()` and gracefully fallback to
@@ -33223,133 +33375,6 @@
 	var performanceNow = performance.now.bind(performance);
 
 	module.exports = performanceNow;
-
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule isTextNode
-	 * @typechecks
-	 */
-
-	var isNode = __webpack_require__(276);
-
-	/**
-	 * @param {*} object The object to check.
-	 * @return {boolean} Whether or not the object is a DOM text node.
-	 */
-	function isTextNode(object) {
-	  return isNode(object) && object.nodeType == 3;
-	}
-
-	module.exports = isTextNode;
-
-
-/***/ },
-/* 247 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule adler32
-	 */
-
-	/* jslint bitwise:true */
-
-	"use strict";
-
-	var MOD = 65521;
-
-	// This is a clean-room implementation of adler32 designed for detecting
-	// if markup is not what we expect it to be. It does not need to be
-	// cryptographically strong, only reasonably good at detecting if markup
-	// generated on the server is different than that on the client.
-	function adler32(data) {
-	  var a = 1;
-	  var b = 0;
-	  for (var i = 0; i < data.length; i++) {
-	    a = (a + data.charCodeAt(i)) % MOD;
-	    b = (b + a) % MOD;
-	  }
-	  return a | (b << 16);
-	}
-
-	module.exports = adler32;
-
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
-	 * @providesModule ReactPutListenerQueue
-	 */
-
-	"use strict";
-
-	var PooledClass = __webpack_require__(49);
-	var ReactBrowserEventEmitter = __webpack_require__(66);
-
-	var assign = __webpack_require__(26);
-
-	function ReactPutListenerQueue() {
-	  this.listenersToPut = [];
-	}
-
-	assign(ReactPutListenerQueue.prototype, {
-	  enqueuePutListener: function(rootNodeID, propKey, propValue) {
-	    this.listenersToPut.push({
-	      rootNodeID: rootNodeID,
-	      propKey: propKey,
-	      propValue: propValue
-	    });
-	  },
-
-	  putListeners: function() {
-	    for (var i = 0; i < this.listenersToPut.length; i++) {
-	      var listenerToPut = this.listenersToPut[i];
-	      ReactBrowserEventEmitter.putListener(
-	        listenerToPut.rootNodeID,
-	        listenerToPut.propKey,
-	        listenerToPut.propValue
-	      );
-	    }
-	  },
-
-	  reset: function() {
-	    this.listenersToPut.length = 0;
-	  },
-
-	  destructor: function() {
-	    this.reset();
-	  }
-	});
-
-	PooledClass.addPoolingTo(ReactPutListenerQueue);
-
-	module.exports = ReactPutListenerQueue;
 
 
 /***/ },
@@ -34917,38 +34942,6 @@
 	 * LICENSE file in the root directory of this source tree. An additional grant
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 *
-	 * @providesModule performance
-	 * @typechecks
-	 */
-
-	"use strict";
-
-	var ExecutionEnvironment = __webpack_require__(29);
-
-	var performance;
-
-	if (ExecutionEnvironment.canUseDOM) {
-	  performance =
-	    window.performance ||
-	    window.msPerformance ||
-	    window.webkitPerformance;
-	}
-
-	module.exports = performance || {};
-
-
-/***/ },
-/* 276 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Copyright 2013-2014, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 *
 	 * @providesModule isNode
 	 * @typechecks
 	 */
@@ -34967,6 +34960,38 @@
 	}
 
 	module.exports = isNode;
+
+
+/***/ },
+/* 276 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Copyright 2013-2014, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 *
+	 * @providesModule performance
+	 * @typechecks
+	 */
+
+	"use strict";
+
+	var ExecutionEnvironment = __webpack_require__(29);
+
+	var performance;
+
+	if (ExecutionEnvironment.canUseDOM) {
+	  performance =
+	    window.performance ||
+	    window.msPerformance ||
+	    window.webkitPerformance;
+	}
+
+	module.exports = performance || {};
 
 
 /***/ },
