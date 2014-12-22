@@ -24,7 +24,7 @@ gulp.task('webpack', function() {
         // minify
         // rename to folder.min.js
         // write to output again
-        return gulp.src(path.join(scriptsPath, folder, '/*.js'))
+        return gulp.src(path.join(scriptsPath, folder, '/client/*.js'))
             .pipe(webpack({
                 output: {
                     filename: folder + '.js'

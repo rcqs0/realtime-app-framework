@@ -34,8 +34,6 @@ module.exports.routes = {
 
     'get /': 'IndexController.index',
 
-    'get /game/*': 'GameController.index',
-
     'get /login': 'AuthController.login',
     'get /logout': 'AuthController.logout',
     'get /register': 'AuthController.register',
