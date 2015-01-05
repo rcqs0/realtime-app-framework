@@ -1,5 +1,6 @@
 var _ = require('lodash-node/underscore');
 var Bacon = require('baconjs');
+var async = require('async');
 var dispatcher = require('../dispatcher/Dispatcher');
 
 var stream = new Bacon.Bus();
@@ -9,6 +10,7 @@ var cards = _.map(require('../data/cards.json'), function(card) {
 
     card.owner = null;
     card.played = false;
+    card.discarded = false;
 
     return card;
 
@@ -17,15 +19,74 @@ var cards = _.map(require('../data/cards.json'), function(card) {
 var players = [];
 var board = [];
 
-function assignCardsToPlayer(playerId) {
+function getAvailableCards() {
 
-    var newCards = _.sample(cards, 3);
+    return _.where(cards, {owner: null, discarded: false, played: false});
 
-    _.each(newCards, function(card) {
+}
 
-        card.owner = playerId;
+function getCardsOfPlayer(playerId) {
 
+    return _.where(cards, {owner: playerId});
+
+}
+
+function assignCardsToPlayers() {
+
+    async.eachSeries(players, function(player, callback) {
+
+        var playerId = player.id;
+
+        var maxNumCards = 10;
+
+        var playerCardCount = getCardsOfPlayer(playerId).length;
+
+        var numNewCards = maxNumCards - playerCardCount;
+
+        var availableCards = getAvailableCards();
+
+        var newCards = _.sample(availableCards, numNewCards);
+
+        _.each(newCards, function (card) {
+
+            card.owner = playerId;
+
+        });
+
+        callback();
     });
+
+}
+
+function assignJudge() {
+
+    var currentJudge = _.findWhere(players, {isJudge: true});
+
+    if (currentJudge) {
+
+        currentJudge.isJudge = false;
+
+        var currentJudgeIndex = _.indexOf(players, currentJudge);
+
+        var numPlayers = players.length;
+
+        if (currentJudgeIndex < numPlayers) {
+
+            players[currentJudgeIndex + 1].isJudge = true;
+
+        } else {
+
+            players[0].isJudge = true;
+
+        }
+
+    } else {
+
+        players[0].isJudge = true;
+
+    }
+
+    console.log(_.findWhere(players, {isJudge: true}));
 
 }
 
@@ -62,7 +123,14 @@ var CardStore = {
     },
 
     getCardsOfPlayer: function(playerId) {
-        return _.where(cards, {owner: playerId});
+        return getCardsOfPlayer(playerId);
+    },
+
+    getPlayer: function(playerId) {
+        var player = _.findWhere(players, {id: playerId});
+        player.cards = getCardsOfPlayer(playerId);
+
+        return player;
     },
 
     getPlayers: function() {
@@ -99,11 +167,8 @@ dispatcher.register(function(action) {
 
         case 'START_GAME':
 
-            _.each(players, function(player) {
-
-                assignCardsToPlayer(player.id);
-
-            });
+            assignCardsToPlayers();
+            assignJudge();
 
             break;
 

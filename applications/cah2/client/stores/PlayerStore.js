@@ -6,10 +6,14 @@ var CHANGE_EVENT = 'change';
 
 var id = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);;
 var cards = [];
+var isJudge = false;
+var points = 0;
 
-function replaceCards(newCards) {
+function updatePlayer(player) {
 
-    cards = newCards;
+    cards = player.cards;
+    isJudge = player.isJudge;
+    points = player.points;
 
 }
 
@@ -26,7 +30,9 @@ var PlayerStore = {
     getAll: function() {
         return {
             id: id,
-            cards: cards
+            cards: cards,
+            isJudge: isJudge,
+            points: 0
         };
     }
 
@@ -36,10 +42,10 @@ dispatcher.register(function(action) {
 
     switch(action.actionType) {
 
-        case 'RECEIVE_CARDS':
+        case 'UPDATE_PLAYER':
 
-            if (action.playerId === id) {
-                replaceCards(action.cards);
+            if (action.player.id === id) {
+                updatePlayer(action.player);
             }
 
             break;

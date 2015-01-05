@@ -19,9 +19,9 @@ CardStore.addChangeListener(function() {
     var players = CardStore.getPlayers();
 
     _.each(players, function(player) {
-        var cardsOwnedByPlayer = CardStore.getCardsOfPlayer(player.id);
 
-        ServerActions.updatePlayer(player.id, cardsOwnedByPlayer);
+        ServerActions.updatePlayer(CardStore.getPlayer(player.id));
+        
     });
 
     ServerActions.updateBoard(CardStore.getBoard());

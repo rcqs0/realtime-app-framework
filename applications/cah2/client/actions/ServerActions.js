@@ -14,16 +14,13 @@ function dispatchClient(action) {
 
 var ServerActions = {
 
-    updatePlayer: function(playerId, cards) {
-
+    updatePlayer: function(player) {
         var action = {
-            actionType: 'RECEIVE_CARDS',
-            cards: cards,
-            playerId: playerId
+            actionType: 'UPDATE_PLAYER',
+            player: player
         };
 
         dispatchClient(action);
-
     },
 
     updateBoard: function(board) {

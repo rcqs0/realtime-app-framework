@@ -20,7 +20,7 @@ var Hand = React.createClass({
         return (
             <div>
                 <div>
-                    Hello, {this.state.id}!
+                    Hello, {this.state.isJudge ? <b>judge</b> : ''} {this.state.id}!
                 </div>
                 <div>
                     <button onClick={this._startGame}>Start game!</button>
