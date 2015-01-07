@@ -6,7 +6,7 @@ var Dispatcher = {
     dispatch: function(action) {
         stream.push(action);
 
-        console.log(action);
+        //console.log(action);
     },
 
     register: function(callback) {

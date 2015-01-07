@@ -109,6 +109,9 @@ function changeGameState(newState) {
 
 function playCard(newCard) {
 
+    // TODO: pass cards by ID not object
+    newCard = _.findWhere(cards, {id: newCard.id});
+
     var currentJudge = getJudge();
 
     var playerIsJudge = currentJudge.id === newCard.owner;
@@ -148,6 +151,7 @@ function clearBoard() {
     _.each(board, function(card) {
 
         card.discarded = true;
+        card.played = false;
 
     });
 
