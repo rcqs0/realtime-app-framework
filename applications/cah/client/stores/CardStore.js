@@ -11,6 +11,7 @@ var cards = _.map(require('../data/cards.json'), function(card) {
     card.owner = null;
     card.played = false;
     card.discarded = false;
+    card.selected = false;
 
     return card;
 
@@ -54,7 +55,7 @@ function assignCardsToPlayers() {
 
         var playerId = player.id;
 
-        var maxNumCards = 3;
+        var maxNumCards = 10;
 
         var playerCardCount = getCardsOfPlayer(playerId).length;
 
@@ -180,6 +181,12 @@ function assignWinner(playerId) {
 
 }
 
+function getSelectedCard() {
+
+    return _.findWhere(cards, {selected: true});
+
+}
+
 function selectCard(playerId, card) {
 
     if (gameState === 'SELECT_CARD') {
@@ -188,11 +195,42 @@ function selectCard(playerId, card) {
 
         if (playerId === currentJudge.id) {
 
-            var winner = assignWinner(card.owner);
+            var selectedCard = getSelectedCard();
 
-            console.log(winner);
+            if (selectedCard && selectedCard.id !== card.id) {
+                selectedCard.selected = false;
+            }
 
-            startTurn();
+            //TODO: pass card by id
+            card = _.findWhere(cards, {id: card.id});
+
+            card.selected = true;
+
+        }
+
+    }
+
+}
+
+function confirmSelectedCard(playerId) {
+
+    if (gameState === 'SELECT_CARD') {
+
+        var currentJudge = getJudge();
+
+        if (playerId === currentJudge.id) {
+
+            var selectedCard = getSelectedCard();
+
+            if (selectedCard) {
+
+                var winner = assignWinner(selectedCard.owner);
+
+                console.log(winner);
+
+                startTurn();
+
+            }
 
         }
 
@@ -299,6 +337,12 @@ dispatcher.register(function(action) {
         case 'SELECT_CARD':
 
             selectCard(action.playerId, action.card);
+
+            break;
+
+        case 'CONFIRM_CARD':
+
+            confirmSelectedCard(action.playerId);
 
             break;
 

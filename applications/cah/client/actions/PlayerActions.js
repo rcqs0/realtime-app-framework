@@ -58,6 +58,17 @@ var PlayerActions = {
 
         dispatchServer(action);
 
+    },
+
+    confirmCard: function(playerId) {
+
+        var action = {
+            actionType: 'CONFIRM_CARD',
+            playerId: playerId
+        };
+
+        dispatchServer(action);
+
     }
 
 };
