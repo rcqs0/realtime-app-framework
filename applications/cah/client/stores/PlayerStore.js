@@ -4,7 +4,7 @@ var dispatcher = require('../dispatcher/Dispatcher');
 var stream = new Bacon.Bus();
 var CHANGE_EVENT = 'change';
 
-var id = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);;
+var id = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
 var cards = [];
 var isJudge = false;
 var points = 0;
@@ -83,7 +83,7 @@ dispatcher.register(function(action) {
             break;
 
 
-        case 'RECEIVE_BOARD':
+        case 'UPDATE_BOARD':
 
             replaceBoard(action.board);
 

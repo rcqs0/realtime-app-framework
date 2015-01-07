@@ -26,7 +26,7 @@ var ServerActions = {
     updateBoard: function(board) {
 
         var action = {
-            actionType: 'RECEIVE_BOARD',
+            actionType: 'UPDATE_BOARD',
             board: board
         };
 

@@ -34,7 +34,7 @@ dispatcher.register(function(action) {
 
     switch(action.actionType) {
 
-        case 'RECEIVE_BOARD':
+        case 'UPDATE_BOARD':
 
             replaceBoard(action.board);
 
