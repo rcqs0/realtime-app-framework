@@ -1,16 +1,17 @@
 var Bacon = require('baconjs');
+var _ = require('lodash-node/underscore');
 var dispatcher = require('../dispatcher/Dispatcher');
 
 var stream = new Bacon.Bus();
 var CHANGE_EVENT = 'change';
 
-var board = [];
-
-function replaceBoard(newBoard) {
-
-    board = newBoard;
-
-}
+var _state = {
+    gameState: null,
+    question: {},
+    board: [],
+    judge: {},
+    players: []
+};
 
 var BoardStore = {
 
@@ -23,9 +24,9 @@ var BoardStore = {
     },
 
     getAll: function() {
-        return {
-            board: board
-        };
+
+        return _state;
+
     }
 
 };
@@ -34,9 +35,9 @@ dispatcher.register(function(action) {
 
     switch(action.actionType) {
 
-        case 'UPDATE_BOARD':
+        case 'UPDATE_ALL':
 
-            replaceBoard(action.board);
+            _state = action.state;
 
             break;
 

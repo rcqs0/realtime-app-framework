@@ -27,6 +27,14 @@ var PlayerActions = {
 
     },
 
+    connect: function() {
+        var action = {
+            actionType: 'CONNECT'
+        };
+
+        dispatchServer(action);
+    },
+
     startGame: function() {
 
         var action = {

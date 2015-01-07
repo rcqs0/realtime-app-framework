@@ -24,6 +24,19 @@ var question = {
 };
 var gameState = null;
 
+function getAll() {
+
+    return {
+
+        players: players,
+        board: board,
+        question: question,
+        gameState: gameState
+
+    };
+
+}
+
 function getAvailableCards() {
 
     return _.where(cards, {owner: null, discarded: false, played: false, cardType: 'A'});
@@ -271,10 +284,6 @@ var CardStore = {
         stream.onValue(callback);
     },
 
-    getCardsOfPlayer: function(playerId) {
-        return getCardsOfPlayer(playerId);
-    },
-
     getPlayer: function(playerId) {
         var player = _.findWhere(players, {id: playerId});
         player.cards = getCardsOfPlayer(playerId);
@@ -286,16 +295,8 @@ var CardStore = {
         return players;
     },
 
-    getBoard: function() {
-        return board;
-    },
-
-    getGameState: function() {
-        return gameState;
-    },
-
-    getQuestion: function() {
-        return question;
+    getAll: function() {
+        return getAll();
     }
 
 };
@@ -343,6 +344,12 @@ dispatcher.register(function(action) {
         case 'CONFIRM_CARD':
 
             confirmSelectedCard(action.playerId);
+
+            break;
+
+        case 'CONNECT':
+
+            // initial update
 
             break;
 

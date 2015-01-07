@@ -8,10 +8,7 @@ var getPlayerState = function() {
 
 var Hand = React.createClass({
     getInitialState: function() {
-        var state = getPlayerState();
-        state.view = 'PLAYER';
-
-        return state;
+        return getPlayerState();
     },
     componentWillMount: function() {
         PlayerStore.addChangeListener(this._onChange);

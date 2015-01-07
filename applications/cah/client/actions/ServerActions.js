@@ -23,33 +23,11 @@ var ServerActions = {
         dispatchClient(action);
     },
 
-    updateBoard: function(board) {
+    updateAll: function(state) {
 
         var action = {
-            actionType: 'UPDATE_BOARD',
-            board: board
-        };
-
-        dispatchClient(action);
-
-    },
-
-    updateGameState: function(gameState) {
-
-        var action = {
-            actionType: 'UPDATE_GAME_STATE',
-            gameState: gameState
-        };
-
-        dispatchClient(action);
-
-    },
-
-    updateQuestion: function(question) {
-
-        var action = {
-            actionType: 'UPDATE_QUESTION',
-            question: question
+            actionType: 'UPDATE_ALL',
+            state: state
         };
 
         dispatchClient(action);

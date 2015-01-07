@@ -5,9 +5,6 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
-var x = null;
-var socket = null;
-
 var _ = require('lodash-node');
 
 var dispatcher = require('../../../applications/cah/client/dispatcher/Dispatcher');
@@ -24,25 +21,18 @@ CardStore.addChangeListener(function() {
 
     });
 
-    ServerActions.updateBoard(CardStore.getBoard());
-    ServerActions.updateGameState(CardStore.getGameState());
-    ServerActions.updateQuestion(CardStore.getQuestion());
+    ServerActions.updateAll(CardStore.getAll());
 });
 
 module.exports = {
 
     action: function(req, res) {
 
-        socket = req.socket;
-
-        socket.join('cah-room');
+        req.socket.join('cah-room');
 
         var action = req.param('action');
-        x = action;
 
         dispatcher.dispatch(action);
-
-        //console.log(action);
 
     }
 

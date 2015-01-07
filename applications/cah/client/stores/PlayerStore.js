@@ -14,17 +14,19 @@ var question = {
     text: '...?'
 };
 
-function replaceBoard(newBoard) {
-
-    board = newBoard;
-
-}
-
 function updatePlayer(player) {
 
     cards = player.cards;
     isJudge = player.isJudge;
     points = player.points;
+
+}
+
+function updateAll(state) {
+
+    question = state.question;
+    board = state.board;
+    gameState = state.gameState;
 
 }
 
@@ -48,12 +50,6 @@ var PlayerStore = {
             board: board,
             question: question
         };
-    },
-
-    getBoard: function() {
-        return {
-            board: board
-        };
     }
 
 };
@@ -70,22 +66,9 @@ dispatcher.register(function(action) {
 
             break;
 
-        case 'UPDATE_GAME_STATE':
+        case 'UPDATE_ALL':
 
-            gameState = action.gameState;
-
-            break;
-
-        case 'UPDATE_QUESTION':
-
-            question = action.question;
-
-            break;
-
-
-        case 'UPDATE_BOARD':
-
-            replaceBoard(action.board);
+            updateAll(action.state);
 
             break;
 
