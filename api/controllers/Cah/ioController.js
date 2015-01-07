@@ -26,6 +26,7 @@ CardStore.addChangeListener(function() {
 
     ServerActions.updateBoard(CardStore.getBoard());
     ServerActions.updateGameState(CardStore.getGameState());
+    ServerActions.updateQuestion(CardStore.getQuestion());
 });
 
 module.exports = {

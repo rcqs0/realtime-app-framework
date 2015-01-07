@@ -43,6 +43,17 @@ var ServerActions = {
 
         dispatchClient(action);
 
+    },
+
+    updateQuestion: function(question) {
+
+        var action = {
+            actionType: 'UPDATE_QUESTION',
+            question: question
+        };
+
+        dispatchClient(action);
+
     }
 
 };

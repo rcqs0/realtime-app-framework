@@ -10,6 +10,9 @@ var isJudge = false;
 var points = 0;
 var gameState = null;
 var board = [];
+var question = {
+    text: '...?'
+};
 
 function replaceBoard(newBoard) {
 
@@ -42,7 +45,8 @@ var PlayerStore = {
             isJudge: isJudge,
             points: points,
             gameState: gameState,
-            board: board
+            board: board,
+            question: question
         };
     },
 
@@ -71,6 +75,13 @@ dispatcher.register(function(action) {
             gameState = action.gameState;
 
             break;
+
+        case 'UPDATE_QUESTION':
+
+            question = action.question;
+
+            break;
+
 
         case 'RECEIVE_BOARD':
 

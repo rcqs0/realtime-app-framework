@@ -18,11 +18,21 @@ var cards = _.map(require('../data/cards.json'), function(card) {
 
 var players = [];
 var board = [];
+var question = {
+    text: '... ?'
+};
 var gameState = null;
 
 function getAvailableCards() {
 
-    return _.where(cards, {owner: null, discarded: false, played: false});
+    return _.where(cards, {owner: null, discarded: false, played: false, cardType: 'A'});
+
+}
+
+function getAvailableQuestions() {
+
+    //TODO: multiple answer questions
+    return _.where(cards, {discarded: false, played: false, cardType: 'Q', numAnswers: 1});
 
 }
 
@@ -34,7 +44,7 @@ function getPlayer(playerId) {
 
 function getCardsOfPlayer(playerId) {
 
-    return _.where(cards, {owner: playerId});
+    return _.where(cards, {owner: playerId, discarded: false});
 
 }
 
@@ -152,6 +162,7 @@ function clearBoard() {
 
         card.discarded = true;
         card.played = false;
+        card.owner = null;
 
     });
 
@@ -189,6 +200,18 @@ function selectCard(playerId, card) {
 
 }
 
+function newQuestion() {
+
+    if (question) {
+        question.discarded = true;
+    }
+
+    var availableQuestions = getAvailableQuestions();
+
+    question = _.sample(availableQuestions, 1)[0];
+
+}
+
 function startTurn() {
 
     changeGameState('PLAY_CARDS');
@@ -196,6 +219,7 @@ function startTurn() {
     clearBoard();
     assignCardsToPlayers();
     assignJudge();
+    newQuestion();
 
 }
 
@@ -230,6 +254,10 @@ var CardStore = {
 
     getGameState: function() {
         return gameState;
+    },
+
+    getQuestion: function() {
+        return question;
     }
 
 };

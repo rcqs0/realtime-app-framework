@@ -16,7 +16,7 @@ var Hand = React.createClass({
         PlayerActions.identify(this.state.id);
     },
     render: function() {
-        console.log(this.state.cards);
+        console.log(this.state);
 
         var cardNodes = this.state.cards.map(function(card) {
 
@@ -31,6 +31,15 @@ var Hand = React.createClass({
         }.bind(this));
 
         var boardCardNodes = this.state.board.map(function(card) {return <li key={card.id} onClick={this._selectCard.bind(this, card)}>{card.text}</li>;}.bind(this));
+
+        var boardCardPlaceholderNodes = this.state.board.map(function(card) {
+
+            return <li key={card.id}>...</li>;
+
+        });
+
+        var boardNodes = this.state.gameState == 'PLAY_CARDS' ? boardCardPlaceholderNodes : boardCardNodes;
+
         return (
             <div>
                 <div>
@@ -43,13 +52,16 @@ var Hand = React.createClass({
                     Points: {this.state.points}
                 </div>
                 <div>
-                    <button onClick={this._startGame}>Start game!</button>
+                    {!this.state.gameState ? <button onClick={this._startGame}>Start game!</button> : ''}
+                </div>
+                <div>
+                    Question: {this.state.question.text}
                 </div>
                 <div>
                     {!this.state.isJudge ? <ul>{cardNodes}</ul> : ''}
                 </div>
                 <div>
-                    {this.state.isJudge ? <ul>{boardCardNodes}</ul> : ''}
+                    {this.state.isJudge ? <ul>{boardNodes}</ul> : ''}
                 </div>
             </div>
         );
