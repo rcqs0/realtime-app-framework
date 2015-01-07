@@ -1,11 +1,12 @@
 var React = require('react');
-var BoardStore = require('../stores/BoardStore');
+var PlayerActions = require('../actions/PlayerActions');
+var BoardStore = require('../stores/PlayerStore');
 
 var getBoardState = function() {
-    return BoardStore.getAll();
+    return BoardStore.getBoard();
 };
 
-var Hand = React.createClass({
+var Board = React.createClass({
     getInitialState: function() {
         return getBoardState();
     },
@@ -13,7 +14,7 @@ var Hand = React.createClass({
         BoardStore.addChangeListener(this._onChange);
     },
     render: function() {
-        var cardNodes = this.state.board.map(function(card) {return <li key={card.id}>{card.text}</li>;});
+        var cardNodes = this.state.board.map(function(card) {return <li key={card.id} onClick={this._selectCard.bind(this, card)}>{card.text}</li>;}.bind(this));
         return (
             <div>
                 <div>
@@ -24,7 +25,10 @@ var Hand = React.createClass({
     },
     _onChange: function() {
         this.setState(getBoardState());
+    },
+    _selectCard: function(card) {
+        PlayerActions.selectCard(card);
     }
 });
 
-module.exports = Hand;
+module.exports = Board;

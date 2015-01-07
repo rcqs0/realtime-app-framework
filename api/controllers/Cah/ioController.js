@@ -5,43 +5,44 @@
  * @help        :: See http://links.sailsjs.org/docs/controllers
  */
 
+var x = null;
+var socket = null;
+
 var _ = require('lodash-node');
 
-var Player = require('../../../applications/cah/server/models/Player');
-var Game = require('../../../applications/cah/server/models/Game');
+var dispatcher = require('../../../applications/cah/client/dispatcher/Dispatcher');
+var CardStore = require('../../../applications/cah/client/stores/CardStore');
+var ServerActions = require('../../../applications/cah/client/actions/ServerActions');
 
-var game = new Game;
+CardStore.addChangeListener(function() {
+
+    var players = CardStore.getPlayers();
+
+    _.each(players, function(player) {
+
+        ServerActions.updatePlayer(CardStore.getPlayer(player.id));
+
+    });
+
+    ServerActions.updateBoard(CardStore.getBoard());
+    ServerActions.updateGameState(CardStore.getGameState());
+});
 
 module.exports = {
 
-    identify: function(req, res) {
+    action: function(req, res) {
 
-        var name = req.param('name');
+        socket = req.socket;
 
-        var player = game.getPlayer({name: name});
-        console.log(player);
+        socket.join('cah-room');
 
-        if (!player) {
-            player = new Player(name);
+        var action = req.param('action');
+        x = action;
 
-            game.addPlayer(player);
-        }
+        dispatcher.dispatch(action);
 
-        player.socket = req.socket.id;
+        //console.log(action);
 
-        res.json(player);
-    },
-
-    start: function(req, res) {
-        var io = sails.io;
-
-        game.assignQuestion();
-        game.assignAnswers();
-        game.assignJudge();
-
-        _.each(game.players, function(player) {
-            io.sockets.socket(player.socket).emit('playerUpdate', player);
-        });
     }
 
 };

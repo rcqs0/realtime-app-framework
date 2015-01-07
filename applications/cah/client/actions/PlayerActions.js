@@ -5,13 +5,11 @@ function dispatch(action) {
 }
 
 function dispatchServer(action) {
-    io.socket.post('/cah2/io/action', {action: action});
+    io.socket.post('/cah/io/action', {action: action});
 }
 
 io.socket.on('action', function(action) {
     dispatcher.dispatch(action);
-
-    console.log(action);
 });
 
 // ACTIONS
@@ -44,6 +42,18 @@ var PlayerActions = {
         var action = {
             actionType: 'PLAY_CARD',
             card: card
+        };
+
+        dispatchServer(action);
+
+    },
+
+    selectCard: function(playerId, card) {
+
+        var action = {
+            actionType: 'SELECT_CARD',
+            card: card,
+            playerId: playerId
         };
 
         dispatchServer(action);

@@ -6,7 +6,7 @@ function dispatch(action) {
 
 function dispatchClient(action) {
 
-    sails.io.sockets.in('cah2-room').emit('action', action);
+    sails.io.sockets.in('cah-room').emit('action', action);
 
 }
 
@@ -28,6 +28,17 @@ var ServerActions = {
         var action = {
             actionType: 'RECEIVE_BOARD',
             board: board
+        };
+
+        dispatchClient(action);
+
+    },
+
+    updateGameState: function(gameState) {
+
+        var action = {
+            actionType: 'UPDATE_GAME_STATE',
+            gameState: gameState
         };
 
         dispatchClient(action);

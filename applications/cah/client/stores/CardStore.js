@@ -18,10 +18,17 @@ var cards = _.map(require('../data/cards.json'), function(card) {
 
 var players = [];
 var board = [];
+var gameState = null;
 
 function getAvailableCards() {
 
     return _.where(cards, {owner: null, discarded: false, played: false});
+
+}
+
+function getPlayer(playerId) {
+
+    return _.findWhere(players, {id: playerId});
 
 }
 
@@ -37,7 +44,7 @@ function assignCardsToPlayers() {
 
         var playerId = player.id;
 
-        var maxNumCards = 10;
+        var maxNumCards = 3;
 
         var playerCardCount = getCardsOfPlayer(playerId).length;
 
@@ -70,7 +77,7 @@ function assignJudge() {
 
         var numPlayers = players.length;
 
-        if (currentJudgeIndex < numPlayers) {
+        if (currentJudgeIndex < numPlayers - 1) {
 
             players[currentJudgeIndex + 1].isJudge = true;
 
@@ -86,29 +93,105 @@ function assignJudge() {
 
     }
 
-    console.log(_.findWhere(players, {isJudge: true}));
+}
+
+function getJudge() {
+
+    return _.findWhere(players, {isJudge: true});
+
+}
+
+function changeGameState(newState) {
+
+    gameState = newState;
 
 }
 
 function playCard(newCard) {
 
-    // remove current cards player has on board
-    var playerCardsOnBoard = _.filter(board, function(card) {
+    var currentJudge = getJudge();
 
-        return card.owner == newCard.owner;
+    var playerIsJudge = currentJudge.id === newCard.owner;
+
+    if (gameState === 'PLAY_CARDS' && !playerIsJudge) {
+
+        // remove current cards player has on board
+        var playerCardsOnBoard = _.filter(board, function (card) {
+
+            return card.owner == newCard.owner;
+
+        });
+
+        _.each(playerCardsOnBoard, function (card) {
+            card.played = false;
+        });
+
+        board = _.difference(board, playerCardsOnBoard);
+
+        // add new cards to board
+        newCard.played = true;
+
+        board.push(newCard);
+
+        if (board.length === players.length - 1) {
+
+            changeGameState('SELECT_CARD');
+
+        }
+
+    }
+
+}
+
+function clearBoard() {
+
+    _.each(board, function(card) {
+
+        card.discarded = true;
 
     });
 
-    _.each(playerCardsOnBoard, function(card) {
-        card.played = false;
-    });
+    board = [];
 
-    board = _.difference(board, playerCardsOnBoard);
+}
 
-    // add new cards to board
-    newCard.played = true;
+function assignWinner(playerId) {
 
-    board.push(newCard);
+    var winner = getPlayer(playerId);
+
+    winner.points += 1;
+
+    return winner;
+
+}
+
+function selectCard(playerId, card) {
+
+    if (gameState === 'SELECT_CARD') {
+
+        var currentJudge = getJudge();
+
+        if (playerId === currentJudge.id) {
+
+            var winner = assignWinner(card.owner);
+
+            console.log(winner);
+
+            startTurn();
+
+        }
+
+    }
+
+}
+
+function startTurn() {
+
+    changeGameState('PLAY_CARDS');
+
+    clearBoard();
+    assignCardsToPlayers();
+    assignJudge();
 
 }
 
@@ -139,6 +222,10 @@ var CardStore = {
 
     getBoard: function() {
         return board;
+    },
+
+    getGameState: function() {
+        return gameState;
     }
 
 };
@@ -167,8 +254,7 @@ dispatcher.register(function(action) {
 
         case 'START_GAME':
 
-            assignCardsToPlayers();
-            assignJudge();
+            startTurn();
 
             break;
 
@@ -178,11 +264,17 @@ dispatcher.register(function(action) {
 
             break;
 
+        case 'SELECT_CARD':
+
+            selectCard(action.playerId, action.card);
+
+            break;
+
         default:
             return true;
     }
 
-    CardStore.emitChange(); // emit different change events depending on action?? definately.
+    CardStore.emitChange(); // emit different change events depending on action?
 
 });
 
