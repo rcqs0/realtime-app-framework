@@ -319,6 +319,10 @@ dispatcher.register(function(action) {
                     // cards?
                 });
 
+                if (gameState) {
+                    assignCardsToPlayers();
+                }
+
             }
 
             break;

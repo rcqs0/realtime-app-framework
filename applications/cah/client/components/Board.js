@@ -1,6 +1,9 @@
 var React = require('react');
+var _ = require('lodash-node/underscore');
 var PlayerActions = require('../actions/PlayerActions');
 var BoardStore = require('../stores/BoardStore');
+var CardList = require('./CardList');
+var PlayerList = require('./PlayerList');
 
 var getBoardState = function() {
     return BoardStore.getAll();
@@ -18,50 +21,38 @@ var Board = React.createClass({
     },
     render: function() {
 
-        var boardCardNodes = this.state.board.map(function(card) {
+        var bigCards = [this.state.question];
+        var selectedCard = _.findWhere(this.state.board, {selected: true});
+        if (selectedCard) {
+            bigCards.push(selectedCard);
+        }
 
-            return (
-
-                <li key={card.id}>
-                    {card.selected ? <b>{card.text}</b> : card.text}
-                </li>
-
-                );
-
-        }.bind(this));
-
-        var boardCardPlaceholderNodes = this.state.board.map(function(card) {
-
-            return <li key={card.id}>...</li>;
-
-        });
-
-        var boardNodes = this.state.gameState == 'PLAY_CARDS' ? boardCardPlaceholderNodes : boardCardNodes;
-
-        var playerNodes = this.state.players.map(function(player) {
-            return <li>{player.id}: {player.points}</li>;
-        });
+        var hideCards = this.state.gameState == 'PLAY_CARDS';
 
         return (
-            <div>
-                <div>
-                    Players:
-                    <ul>
-                        {playerNodes}
-                    </ul>
+            <div className="container-fluid">
+                <div className="col-9">
+
+                    <CardList cards={bigCards} />
+                    <CardList cards={this.state.board} hidden={hideCards} small />
+
                 </div>
-                <div>
-                    Question: {this.state.question.text}
-                </div>
-                <div>
-                    <ul>{boardNodes}</ul>
+                <div className="col-3">
+                    <div className="side-bar">
+                        <div className="side-bar-inner">
+
+                            <h1>Players</h1>
+                            <PlayerList players={this.state.players} />
+
+                        </div>
+                    </div>
                 </div>
             </div>
             );
     },
     _onChange: function() {
         this.setState(getBoardState());
-    }
+    },
 });
 
 module.exports = Board;

@@ -77,6 +77,17 @@ var PlayerActions = {
 
         dispatchServer(action);
 
+    },
+
+    changeId: function(playerId) {
+
+        var action = {
+            actionType: 'CHANGE_ID',
+            playerId: playerId
+        };
+
+        dispatch(action);
+
     }
 
 };

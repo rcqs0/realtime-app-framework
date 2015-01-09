@@ -4,7 +4,7 @@ var dispatcher = require('../dispatcher/Dispatcher');
 var stream = new Bacon.Bus();
 var CHANGE_EVENT = 'change';
 
-var id = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+var id = null;
 var cards = [];
 var isJudge = false;
 var points = 0;
@@ -13,6 +13,12 @@ var board = [];
 var question = {
     text: '...?'
 };
+
+function changeId(playerId) {
+
+    id = playerId;
+
+}
 
 function updatePlayer(player) {
 
@@ -57,6 +63,12 @@ var PlayerStore = {
 dispatcher.register(function(action) {
 
     switch(action.actionType) {
+
+        case 'CHANGE_ID':
+
+            changeId(action.playerId);
+
+            break;
 
         case 'UPDATE_PLAYER':
 

@@ -1,0 +1,179 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    margin: 0;
+    background-color: #ccc;
+    background-image: url("/images/bg.png");
+}
+
+html, body {
+    height: 100%;
+}
+
+.container-fluid {
+    margin-right: auto;
+    margin-left: auto;
+    height: 100%
+}
+
+.card-list {
+    width: 100%;
+    float: left;
+    margin: 20px;
+}
+
+.card-outer {
+    float: left;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin: 10px;
+
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border-radius: 10px;
+
+    box-shadow: -6px 6px #222;
+}
+
+.card-inner {
+    padding: 25px;
+    padding-top: 30px;
+}
+
+.card-question {
+    background-color: black;
+    color: white;
+}
+
+.card-answer {
+    background-color: white;
+    color: black;
+}
+
+.card-small {
+    width: 150px;
+    height: 200px;
+    font-size: 0.75em;
+}
+
+.card-small.card-answer {
+    background-color: #ccc;
+}
+
+.card-small.card-selected {
+    background-color: white;
+    border: 5px solid yellow;
+    box-sizing: border-box;
+}
+
+.col-9 {
+    position: relative;
+    float: left;
+    width: 75%;
+    height: 100%;
+}
+
+.col-3 {
+    position: relative;
+    float: left;
+    width: 25%;
+    height: 100%;
+}
+
+.side-bar {
+    height:100%;
+    min-height: 100%;
+    box-shadow: -3px 3px 3px #222;
+    background-color: white;
+    background-image: url("/images/swirl_pattern.png");
+}
+
+.side-bar-inner {
+    padding: 25px;
+}
+
+.top-bar {
+    background-color: white;
+    background-image: url("/images/swirl_pattern.png");
+    font-size: 2em;
+}
+
+.top-bar-inner {
+    padding: 25px;
+    font-weight: bold;
+}
+
+.bottom-bar {
+    text-align: center;
+}
+
+.status-text {
+    font-size: 0.5em;
+}
+
+.player-list {
+    margin-left: auto;
+    margin-right: auto;
+    list-style-type: none;
+    padding: 0;
+}
+
+.points-badge {
+    float: right;
+    padding-right: 25px;
+}
+
+.player-item {
+    border-radius: 20px;
+    padding: 10px;
+    padding-left: 25px;
+    margin: 3px;
+    background-color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.stacked-card-list {
+    margin-left: auto;
+    margin-right: auto;
+    list-style-type: none;
+    padding: 0;
+}
+
+.stacked-card {
+    border-radius: 10px;
+    padding: 10px;
+    padding-left: 25px;
+    margin: 3px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.stacked-card-played {
+    background-color: #ccc;
+}
+
+.stacked-card-selected {
+    background-color: yellow;
+}
+
+.judge {
+    background-color: yellow;
+}
+
+.button {
+    border-radius: 10px;
+    padding: 15px;
+    background-color: white;
+    font-weight: bold;
+    font-size: 28px;
+}
+
+.pad {
+    padding: 25px;
+}
+
+input {
+    padding: 25px;
+    font-size: 2em;
+}
